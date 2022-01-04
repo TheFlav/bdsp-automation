@@ -8,24 +8,37 @@ import pygame.camera
 from nxbt.nxbt import Buttons
 from skimage.transform import resize
 
-
 pygame.camera.init()
 # cam = pygame.camera.Camera(pygame.camera.list_cameras()[0])
-cam = pygame.camera.Camera("/dev/video2", (720,480))
+#cam = pygame.camera.Camera("/dev/video2", (720,480))
+cam = pygame.camera.Camera("/dev/video0", (720,480))
 cam.start()
 
 
 def get_image(resize=True, resize_width=720, resize_height=480):
     image = cam.get_image()
+
+    ##DEBUGGING
+    #filename = datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
+    #pngfilepath = 'screenshots/' + filename +'.png'
+    #csvfilepath = 'screenshots/' + filename +'.csv'
+    #pygame.image.save(image, pngfilepath)
+    #dumpimage = array3d(image).swapaxes(0,1)
+    #dumpimage = np.array(dumpimage)
+    #np.savetxt('screenshots/' + filename +'-red.csv', dumpimage[:,:,0], delimiter=",")
+    #np.savetxt('screenshots/' + filename +'-green.csv', dumpimage[:,:,1], delimiter=",")
+    #np.savetxt('screenshots/' + filename +'-blue.csv', dumpimage[:,:,2], delimiter=",")
+
     image = array3d(image).swapaxes(0,1)
     image = np.array(image)
+
 
     # Resize image if option is true and
     # resize width/height don't match image dimensions
     if resize and (resize_width != image.shape[1] or
                    resize_height != image.shape[0]):
         image = resize(image, (resize_height, resize_width))
-    
+
     return image
 
 
@@ -69,7 +82,7 @@ def wait_for_battle(img_fn, timeout=60, framerate=30, std_threshold=5, rgb_thres
 
 def exit_and_reset(nx, controller_index, stats):
     stats["issues"] += 1
-    add_to_stat_log(stats, "Exiting and restting. Attempting to exit to home menu...")
+    add_to_stat_log(stats, "Exiting and resetting. Attempting to exit to home menu...")
     on_home_menu = False
     while on_home_menu is False:
         press_button(nx, controller_index, "B")
@@ -89,10 +102,13 @@ def exit_and_reset(nx, controller_index, stats):
         hm_check = img[yt:yb, xl:xr, :]
         hm_mean = hm_check.transpose(2,0,1).mean(axis=(1,2))
 
-        if abs(hm_mean[0] - 55) < 2 and abs(hm_mean[1] - 55) < 2 and abs(hm_mean[2] - 55) < 2:
+        add_to_stat_log(stats, f"hm_mean[0]={hm_mean[0]} hm_mean[1]={hm_mean[1]} hm_mean[2]={hm_mean[2]}")
+
+#OLD        if abs(hm_mean[0] - 55) < 2 and abs(hm_mean[1] - 55) < 2 and abs(hm_mean[2] - 55) < 2:
+        if abs(hm_mean[0] - 55) < 3 and abs(hm_mean[1] - 55) < 3 and abs(hm_mean[2] - 55) < 3:
             add_to_stat_log(stats, "On home menu")
             on_home_menu = True
-    
+
     add_to_stat_log(stats, "Resetting...")
     press_button(nx, controller_index, "X")
     time.sleep(0.75)

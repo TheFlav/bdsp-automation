@@ -14,6 +14,11 @@ TURTWIG = 0
 CHIMCHAR = 1
 PIPLUP = 2
 
+def my_sleep(x):
+    for i in range(int(x*10)):
+        time.sleep(0.1)
+        get_image()	#keep the video stream "awake"
+
 
 def detect_shiny_starter(img_fn, timeout=17, framerate=30, timing_threshold=11.55):
     hp_bar_time = time.time()
@@ -56,7 +61,7 @@ def detect_shiny_starter(img_fn, timeout=17, framerate=30, timing_threshold=11.5
         t = time.time() - t
         sleep_time = 1/framerate - t
         if sleep_time > 0:
-            time.sleep(sleep_time)
+            my_sleep(sleep_time)
     
     return False
 
@@ -73,7 +78,7 @@ def reset_hunt():
             "log": []
         }
 
-    pokemon = TURTWIG
+    pokemon = CHIMCHAR
 
     starter_select_check = np.array(Image.open("./check-imgs/starter-select-check.png"))
     yes_select_check = np.array(Image.open("./check-imgs/yes-select-check.png"))
@@ -101,13 +106,13 @@ def reset_hunt():
 
         # Assume we are on the Home screen with BDSP selected
         press_button(nx, controller_index, "A")
-        time.sleep(1.3)
+        my_sleep(1.3)
         press_button(nx, controller_index, "A")
-        time.sleep(0.5)
+        my_sleep(0.5)
         press_button(nx, controller_index, "A")
-        time.sleep(0.5)
+        my_sleep(0.5)
         press_button(nx, controller_index, "A")
-        time.sleep(2)
+        my_sleep(2)
 
         # Wait for the game to boot
         game_loading = False
@@ -125,12 +130,13 @@ def reset_hunt():
             # Check if the game crashed
             # Get independent means of r, g, and b
             rgb_means = np.mean(relative_crop(img, 0.0, 0.025, 1.0, 0.975), (0,1))
-            if abs(rgb_means[0] - 55) < 2 and abs(rgb_means[1] - 55) < 2 and abs(rgb_means[2] - 55) < 2:
+            #if abs(rgb_means[0] - 55) < 2 and abs(rgb_means[1] - 55) < 2 and abs(rgb_means[2] - 55) < 2:
+            if abs(rgb_means[0] - 55) < 3 and abs(rgb_means[1] - 55) < 3 and abs(rgb_means[2] - 55) < 3:
                 add_to_stat_log(stats, "Game crashed...")
                 game_loading = False
                 game_loaded = False
                 press_button(nx, controller_index, "A")
-                time.sleep(2)
+                my_sleep(2)
 
 
             # Check if the game is loading
@@ -147,20 +153,20 @@ def reset_hunt():
                 press_button(nx, controller_index, "A")
 
         # Wait a bit to make sure the game has fully loaded in
-        time.sleep(2)
+        my_sleep(2)
 
         # Move up once on the dpad
         add_to_stat_log(stats, "Moving up...")
         tilt_stick(nx, controller_index, "L_STICK", 0, 100)
 
         # Wait for rival to talk
-        time.sleep(1)
+        my_sleep(1)
 
         # Skip dialogue and enter
         press_button(nx, controller_index, "A")
 
         # Wait for scene to load in
-        time.sleep(3)
+        my_sleep(3)
 
         # Mash A until we see a black screen
         # which signals that we're choosing a pokemon
@@ -175,26 +181,38 @@ def reset_hunt():
             if time.time() - t > 70:
                 add_to_stat_log(stats, "Something went wrong. Dialogue > 70s.")
                 exit_and_reset(nx, controller_index, stats)
+                t = time.time()
 
             # Check if the game is loading
             if select_loading is False and select_mean < 18:
-                add_to_stat_log(stats, "Entering selection screen...")
+                add_to_stat_log(stats, f"Entering selection screen... {select_mean}")
                 select_loading = True
 
             # Check if we've exited the loader
-            if select_loading and select_mean >= 18:
-                add_to_stat_log(stats, "Entered selection screen")
+            if select_loading and select_mean >= 60:
+                add_to_stat_log(stats, f"Entered selection screen {select_mean}")
                 select_loaded = True
+
             # If we haven't, keep pressing A
             else:
                 press_button(nx, controller_index, "A")
 
+        my_sleep(5)
         # Check that we are on the starter selection screen
-        time.sleep(5)
         img = relative_crop(get_image(), 0.7, 0.75, 0.95, 0.92)
+
+
         img_mse = mse(starter_select_check, img)
-        add_to_stat_log(stats, f"Starter MSE: {img_mse}")
+        add_to_stat_log(stats, f"Starter MSE: {img_mse} (should be <= 15)")
         if img_mse > 15:
+            np.savetxt('screenshots/starter_mpe-red.csv', img[:,:,0], delimiter=",")
+            np.savetxt('screenshots/starter_mpe-grn.csv', img[:,:,1], delimiter=",")
+            np.savetxt('screenshots/starter_mpe-blu.csv', img[:,:,2], delimiter=",")
+
+            np.savetxt('screenshots/starter_select_check-red.csv', starter_select_check[:,:,0], delimiter=",")
+            np.savetxt('screenshots/starter_select_check-grn.csv', starter_select_check[:,:,1], delimiter=",")
+            np.savetxt('screenshots/starter_select_check-blu.csv', starter_select_check[:,:,2], delimiter=",")
+
             add_to_stat_log(stats, "Something went wrong. Not on starter selection.")
             exit_and_reset(nx, controller_index, stats)
             continue
@@ -263,12 +281,12 @@ def reset_hunt():
             img_mse = np.min(mses)
             add_to_stat_log(stats, f"Hand Select MSE: {img_mse}")
 
-            if img_mse < 30:
+            if img_mse < 35:
                 yes_select_present = True
                 break
 
             press_button(nx, controller_index, "DPAD_RIGHT")
-            time.sleep(0.75)
+            my_sleep(0.75)
 
             if time.time() - t > 30:
                 break
@@ -305,7 +323,7 @@ def reset_hunt():
         add_to_stat_log(stats, "Starter present. Selecting...")
         for i in range(3):
             tilt_stick(nx, controller_index, "L_STICK", 0, 100, duration=0.2)
-        time.sleep(1)
+        my_sleep(1)
         press_button(nx, controller_index, "A")
         press_button(nx, controller_index, "A")
         add_to_stat_log(stats, "Starter selected")
@@ -325,25 +343,26 @@ def reset_hunt():
 
         # Shiny not detected. Resetting.
         press_button(nx, controller_index, "HOME")
-        time.sleep(2.5)
+        my_sleep(2.5)
 
         # Checking if we're on the home menu
         hm_check = relative_crop(get_image(), 0.0, 0.05, 0.8, 0.7)
         hm_mean = hm_check.transpose(2,0,1).mean(axis=(1,2))
         
         add_to_stat_log(stats, "Checking if we're on the home menu...")
-        if abs(hm_mean[0] - 55) < 2 and abs(hm_mean[1] - 55) < 2 and abs(hm_mean[2] - 55) < 2:
+        #if abs(hm_mean[0] - 55) < 2 and abs(hm_mean[1] - 55) < 2 and abs(hm_mean[2] - 55) < 2:
+        if abs(hm_mean[0] - 55) < 3 and abs(hm_mean[1] - 55) < 3 and abs(hm_mean[2] - 55) < 3:
             add_to_stat_log(stats, "On home menu")
         else:
             add_to_stat_log(stats, "Not on home menu. Attempting to exit to home menu...")
             on_home_menu = False
             while on_home_menu is False:
                 press_button(nx, controller_index, "B")
-                time.sleep(0.5)
+                my_sleep(0.5)
                 press_button(nx, controller_index, "B")
-                time.sleep(0.5)
+                my_sleep(0.5)
                 press_button(nx, controller_index, "HOME")
-                time.sleep(1)
+                my_sleep(1)
 
                 # Checking if we're on the home menu
                 img = get_image()
@@ -355,14 +374,15 @@ def reset_hunt():
                 hm_check = img[yt:yb, xl:xr, :]
                 hm_mean = hm_check.transpose(2,0,1).mean(axis=(1,2))
 
-                if abs(hm_mean[0] - 55) < 2 and abs(hm_mean[1] - 55) < 2 and abs(hm_mean[2] - 55) < 2:
+                #if abs(hm_mean[0] - 55) < 2 and abs(hm_mean[1] - 55) < 2 and abs(hm_mean[2] - 55) < 2:
+                if abs(hm_mean[0] - 55) < 3 and abs(hm_mean[1] - 55) < 3 and abs(hm_mean[2] - 55) < 3:
                     add_to_stat_log(stats, "On home menu")
                     on_home_menu = True
         
         press_button(nx, controller_index, "X")
-        time.sleep(0.75)
+        my_sleep(0.75)
         press_button(nx, controller_index, "A")
-        time.sleep(3)
+        my_sleep(3)
 
         stats['reset_count'] += 1
         with open("stats.json", "w") as f:
