@@ -10,8 +10,8 @@ from skimage.transform import resize
 
 pygame.camera.init()
 # cam = pygame.camera.Camera(pygame.camera.list_cameras()[0])
-cam = pygame.camera.Camera("/dev/video2", (720,480))
-#cam = pygame.camera.Camera("/dev/video0", (720,480))
+#cam = pygame.camera.Camera("/dev/video2", (720,480))
+cam = pygame.camera.Camera("/dev/video0", (720,480))
 cam.start()
 
 def save_screenshot():
