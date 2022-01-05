@@ -81,7 +81,7 @@ def reset_hunt():
             "log": []
         }
 
-    pokemon = CHIMCHAR
+    pokemon = PIPLUP
 
     starter_select_check = np.array(Image.open("./check-imgs/starter-select-check.png"))
     yes_select_check = np.array(Image.open("./check-imgs/yes-select-check.png"))
