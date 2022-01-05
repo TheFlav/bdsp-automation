@@ -66,26 +66,29 @@ If `pip3` is not available on your system, please use your package manager to in
 sudo pip3 install -r requirements.txt
 ```
 
-4. Install tmux through your system's package manager
-
-```bash
-# Example for APT package manager-based systems
-sudo apt-get install tmux
-```
-
-5. Install v4l2loopback through your system's package manager
+4. Install tmux, v4l2loopback, and libatlas through your system's package manager
 
 ```bash
 # Example for APT package manager-based systems
 sudo apt-get install v4l2loopback-dkms
+sudo apt-get install libatlas-base-dev
 ```
+5. Install nxbt and test it prior to using bdsp-automation
+    - Read everything at https://github.com/Brikwerk/nxbt
+    - Run through the demo under Getting Started
 
 6. Configure your Switch with the following settings
     - The Dark Theme should be selected as your system theme.
     - The Switch's dock output resolution should be set to 480p. This helps with transcoding and streaming on low-end hardware. This setting is located in System Settings > TV Settings > TV Resolution
+    - In "SYSTEM SETTINGS -> TV Settings -> RGB Range" set "Limited Range"
     - (Optional) If the script you plan to run does not require internet access and likely will run for a prolonged period of time, you should disconnect your Switch from the internet. This prevents update prompts, which can derail automation.
 
-7. For notifications, this project leverages [Pushover](https://pushover.net). If you do not wish to use Pushover but do wish to receive notifications, feel free to edit the `src/notify.py` file to your liking. If you do wish to use Pushover, please create a `notify-keys.json` file at the root of this project and fill it with the following template:
+7. Configure your Pokemon game with the following settings
+    - Text Speed: Fast
+    - Gyroscope: Use
+    - Autosave: Off
+
+8. For notifications, this project leverages [Pushover](https://pushover.net). If you do not wish to use Pushover but do wish to receive notifications, feel free to edit the `src/notify.py` file to your liking. If you do wish to use Pushover, please create a `notify-keys.json` file at the root of this project and fill it with the following template:
 
 **Please fill in the template with your keys before using with any scripts.**
 ```json
