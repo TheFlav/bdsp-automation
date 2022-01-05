@@ -14,16 +14,13 @@ TURTWIG = 0
 CHIMCHAR = 1
 PIPLUP = 2
 
-stats = None
-
-
 def my_sleep(x):
     for i in range(int(x*10)):
         time.sleep(0.1)
         get_image()	#keep the video stream "awake"
 
 
-def detect_shiny_starter(img_fn, timeout=17, framerate=30, timing_threshold=11.55):
+def detect_shiny_starter(img_fn, stats, timeout=17, framerate=30, timing_threshold=11.55):
     hp_bar_time = time.time()
     timeout_start = time.time()
     while time.time() - timeout_start < timeout:
@@ -73,7 +70,7 @@ def detect_shiny_starter(img_fn, timeout=17, framerate=30, timing_threshold=11.5
 
 
 def reset_hunt():
-    #stats = None
+    stats = None
     if os.path.isfile("stats.json"):
         with open("stats.json", "r") as f:
             stats = json.load(f)
@@ -338,7 +335,7 @@ def reset_hunt():
         add_to_stat_log(stats, "Battle detected")
 
         t = time.time()
-        result = detect_shiny_starter(get_image)
+        result = detect_shiny_starter(get_image, stats)
         add_to_stat_log(stats, f"HP Bar Time: {time.time() - t}")
 
         if result:

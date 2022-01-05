@@ -156,7 +156,7 @@ def add_to_stat_log(stats, msg):
         json.dump(stats, f)
 
     with open("log.txt", "a") as logfile:
-        logfile.write(msg)
+        logfile.write(msg + "\n")
 
 
 def press_button(nx, controller_indx, button, duration=0.1):
