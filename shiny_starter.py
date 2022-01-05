@@ -284,7 +284,7 @@ def reset_hunt():
             img_mse = np.min(mses)
             add_to_stat_log(stats, f"Hand Select MSE: {img_mse}")
 
-            if img_mse < 35:
+            if img_mse < 45:
                 yes_select_present = True
                 break
 
