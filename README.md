@@ -70,6 +70,7 @@ sudo pip3 install -r requirements.txt
 
 ```bash
 # Example for APT package manager-based systems
+sudo apt-get install tmux
 sudo apt-get install v4l2loopback-dkms
 sudo apt-get install libatlas-base-dev
 ```
