@@ -200,7 +200,7 @@ def reset_hunt():
             else:
                 press_button(nx, controller_index, "A")
 
-        my_sleep(5)
+        my_sleep(2.2)
         # Check that we are on the starter selection screen
         img = relative_crop(get_image(), 0.7, 0.75, 0.95, 0.92)
 
@@ -289,7 +289,7 @@ def reset_hunt():
                 break
 
             press_button(nx, controller_index, "DPAD_RIGHT")
-            my_sleep(0.75)
+            #my_sleep(0.2)
 
             if time.time() - t > 30:
                 break
@@ -312,7 +312,8 @@ def reset_hunt():
                 yes_select_present = True
                 break
 
-            press_button(nx, controller_index, "A", duration=2.0)
+            press_button(nx, controller_index, "A", duration=0.1)
+            my_sleep(0.4)
 
             if time.time() - t > 30:
                 break
@@ -326,7 +327,7 @@ def reset_hunt():
         add_to_stat_log(stats, "Starter present. Selecting...")
         for i in range(3):
             tilt_stick(nx, controller_index, "L_STICK", 0, 100, duration=0.2)
-        my_sleep(1)
+        my_sleep(0.1)
         press_button(nx, controller_index, "A")
         press_button(nx, controller_index, "A")
         add_to_stat_log(stats, "Starter selected")
@@ -346,7 +347,7 @@ def reset_hunt():
 
         # Shiny not detected. Resetting.
         press_button(nx, controller_index, "HOME")
-        my_sleep(2.5)
+        my_sleep(2)
 
         # Checking if we're on the home menu
         hm_check = relative_crop(get_image(), 0.0, 0.05, 0.8, 0.7)
