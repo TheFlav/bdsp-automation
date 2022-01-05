@@ -53,9 +53,11 @@ def detect_shiny_starter(img_fn, timeout=17, framerate=30, timing_threshold=11.5
         # Check diffs
         if red_diff < 35 and green_diff < 35 and blue_diff < 35:
             appearance_time = time.time() - hp_bar_time
-            print("Appearance time", appearance_time)
+            #print("Appearance time", appearance_time)
+            add_to_stat_log(stats,f"Appearance time = {appearance_time}")
             if appearance_time > timing_threshold:
-                print("Shiny detected")
+                #print("Shiny detected")
+                add_to_stat_log(stats,"Shiny detected")
                 return True
             break
 
