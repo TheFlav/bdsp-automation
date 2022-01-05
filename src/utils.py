@@ -14,12 +14,25 @@ pygame.camera.init()
 cam = pygame.camera.Camera("/dev/video0", (720,480))
 cam.start()
 
+def save_screenshot():
+    image = cam.get_image()
+
+    ##DEBUGGING
+    filename = datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S_%f")
+    pngfilepath = 'screenshots/' + filename +'.png'
+    #csvfilepath = 'screenshots/' + filename +'.csv'
+    pygame.image.save(image, pngfilepath)
+    #dumpimage = array3d(image).swapaxes(0,1)
+    #dumpimage = np.array(dumpimage)
+    #np.savetxt('screenshots/' + filename +'-red.csv', dumpimage[:,:,0], delimiter=",")
+    #np.savetxt('screenshots/' + filename +'-green.csv', dumpimage[:,:,1], delimiter=",")
+    #np.savetxt('screenshots/' + filename +'-blue.csv', dumpimage[:,:,2], delimiter=",")
 
 def get_image(resize=True, resize_width=720, resize_height=480):
     image = cam.get_image()
 
     ##DEBUGGING
-    #filename = datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
+    #filename = datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S_%f")
     #pngfilepath = 'screenshots/' + filename +'.png'
     #csvfilepath = 'screenshots/' + filename +'.csv'
     #pygame.image.save(image, pngfilepath)

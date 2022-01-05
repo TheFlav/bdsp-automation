@@ -32,8 +32,8 @@ def detect_shiny_starter(img_fn, timeout=17, framerate=30, timing_threshold=11.5
         height, width, _ = img.shape
         xl = int(width * 0.90)
         xr = int(width * 0.96)
-        yb = int(height * 0.13)
-        yt = int(height * 0.115)
+        yb = int(height * 0.12917)
+        yt = int(height * 0.117)
         hp_bar = img[yt:yb, xl:xr, :]
 
         # Get the mean of the hp bar
@@ -43,9 +43,12 @@ def detect_shiny_starter(img_fn, timeout=17, framerate=30, timing_threshold=11.5
 
         # Get the diff of the hp_bar's channels
         # from the expected hp_bar colour
-        red_diff = abs(red_mean - 100)
-        green_diff = abs(green_mean - 200)
+        red_diff = abs(red_mean - 126)
+        green_diff = abs(green_mean - 248)
         blue_diff = abs(blue_mean - 100)
+
+        # on my HP bar I got red_mean=126.0077519379845 green_mean=248.34108527131784 blue_mean=99.61627906976744
+        #print(red_mean, green_mean, blue_mean, red_diff, green_diff, blue_diff)
 
         # Check diffs
         if red_diff < 35 and green_diff < 35 and blue_diff < 35:
@@ -56,8 +59,6 @@ def detect_shiny_starter(img_fn, timeout=17, framerate=30, timing_threshold=11.5
                 return True
             break
 
-        # print(red_mean, green_mean, blue_mean, red_diff, green_diff, blue_diff)
-        
         t = time.time() - t
         sleep_time = 1/framerate - t
         if sleep_time > 0:
