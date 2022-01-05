@@ -102,3 +102,8 @@ sudo apt-get install libatlas-base-dev
 ## Running Automation Scripts
 
 Please see the guides located in the [docs](/docs) folder for situation-specific automation scripts.
+
+## TODO: Things to add/fix
+
+I think that there should be a "first time" setup that will have to control the game with your joycons and stop at certain steps throughout the process.  The script would take screenshots at specific places (like at all the ones used/shown in check-imgs PLUS the HP bar screen).  Then, instead of tiny crops of images stored in the ./check-imgs/ directory, it would store the entire screenshot.  The code would do the crop to compare.  This way, it's easy for people to generate their own check images (which might differ in RGB intensity between different capture cards or whatever) instead of relying on the images in the repo.
+
