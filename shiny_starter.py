@@ -106,6 +106,8 @@ def reset_hunt():
 
     while True:
         add_to_stat_log(stats, f"Reset Count {stats['reset_count']}")
+        if(stats['reset_count'] % 50 == 0):
+          send_message(f"Shiny reset count = {stats['reset_count']}")
 
         # Assume we are on the Home screen with BDSP selected
         press_button(nx, controller_index, "A")
