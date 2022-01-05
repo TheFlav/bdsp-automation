@@ -4,7 +4,7 @@ from os import path
 from pushover import init, Client
 
 
-def send_message(msg):
+def send_message(msg, img=None):
     if not path.isfile('notify-keys.json'):
         print("notify-keys.json not found")
         print("An empty JSON file has been created for you to fill out.")
@@ -26,7 +26,11 @@ def send_message(msg):
     client = Client(keys['user-key'])
 
     # Send the message
-    client.send_message(msg)
+    if(img):
+      with open(img, 'rb') as image:
+        client.send_message(msg, attachment=image)
+    else:
+      client.send_message(msg)
 
 
 if __name__ == "__main__":

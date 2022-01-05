@@ -28,6 +28,10 @@ def save_screenshot():
     #np.savetxt('screenshots/' + filename +'-green.csv', dumpimage[:,:,1], delimiter=",")
     #np.savetxt('screenshots/' + filename +'-blue.csv', dumpimage[:,:,2], delimiter=",")
 
+def get_cam_image():
+    image = cam.get_image()
+    return image
+
 def get_image(resize=True, resize_width=720, resize_height=480):
     image = cam.get_image()
 

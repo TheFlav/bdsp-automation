@@ -395,4 +395,8 @@ def reset_hunt():
 
 if __name__ == "__main__":
     reset_hunt()
-    send_message("Found a shiny")
+    msg_image = get_cam_image()
+    msg_image_filename = "screenshots/shiny_msg.jpg"
+    pygame.image.save(msg_image, msg_image_filename)
+
+    send_message("Found a shiny", msg_image_filename)
